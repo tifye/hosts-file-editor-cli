@@ -51,7 +51,7 @@ func renderList(entries []core.HostEntry) {
 	)
 
 	t := table.New().
-		Headers("HOSTNAME", "IP", "COMMENTS").
+		Headers("NR", "HOSTNAME", "IP", "COMMENTS").
 		Border(lipgloss.ThickBorder()).
 		BorderStyle(BorderStyle).
 		StyleFunc(func(row, col int) lipgloss.Style {
@@ -65,8 +65,10 @@ func renderList(entries []core.HostEntry) {
 			}
 		})
 
+	nr := 0
 	for _, entry := range entries {
-		t.Row(entry.Hostname, entry.IP, strings.TrimSpace(entry.Comment))
+		t.Row(fmt.Sprint(nr), entry.Hostname, entry.IP, strings.TrimSpace(entry.Comment))
+		nr += 1
 	}
 
 	fmt.Println(t)
