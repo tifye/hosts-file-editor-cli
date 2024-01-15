@@ -6,8 +6,11 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/tifye/hosts-file-editor-cli/core"
 )
 
 // listCmd represents the list command
@@ -16,7 +19,24 @@ var listCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
+		file, err := os.Open("C:\\windows\\system32\\drivers\\etc\\hosts")
+		if err != nil {
+			log.Fatalf("failed opening file: %s", err)
+		}
+		defer file.Close()
+
+		entries, err := core.ParseHostsFile(file)
+		if err != nil {
+			log.Fatalf("failed parsing file: %s", err)
+		}
+
+		if len(entries) == 0 {
+			log.Println("No entries found")
+		}
+
+		for _, entry := range entries {
+			fmt.Printf("%s %s\n", entry.IP, entry.Hostname)
+		}
 	},
 }
 
