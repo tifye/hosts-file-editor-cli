@@ -10,6 +10,11 @@ import (
 type HostEntry struct {
 	IP       string
 	Hostname string
+	Comment  string
+}
+
+func (e HostEntry) String() string {
+	return fmt.Sprintf("%s %s %s", e.IP, e.Hostname, e.Comment)
 }
 
 func ParseHostsFile(reader io.Reader) ([]HostEntry, error) {
