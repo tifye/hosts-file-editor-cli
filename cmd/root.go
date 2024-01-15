@@ -10,6 +10,9 @@ var rootCmd = &cobra.Command{
 	Use:   "hfe",
 	Short: "",
 	Long:  ``,
+	Run: func(cmd *cobra.Command, args []string) {
+		listCmd.Run(cmd, args)
+	},
 }
 
 func Execute() {
