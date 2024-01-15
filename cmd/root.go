@@ -6,6 +6,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var cli *Cli
+
 var rootCmd = &cobra.Command{
 	Use:   "hfe",
 	Short: "",
@@ -23,4 +25,7 @@ func Execute() {
 }
 
 func init() {
+	cli = NewCli()
+
+	rootCmd.AddCommand(newAddCommand(cli))
 }
