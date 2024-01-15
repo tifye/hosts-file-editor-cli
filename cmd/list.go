@@ -14,7 +14,7 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "",
+	Short: "List all entries in the hosts file",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		file, err := os.Open("C:\\windows\\system32\\drivers\\etc\\hosts")
