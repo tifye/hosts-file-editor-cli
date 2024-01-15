@@ -12,29 +12,31 @@ import (
 	"github.com/tifye/hosts-file-editor-cli/core"
 )
 
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List all entries in the hosts file",
-	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
-		file, err := os.Open("C:\\windows\\system32\\drivers\\etc\\hosts")
-		if err != nil {
-			log.Fatalf("failed opening file: %s", err)
-		}
-		defer file.Close()
+func newListCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "list",
+		Short: "List all entries in the hosts file",
+		Long:  ``,
+		Run: func(cmd *cobra.Command, args []string) {
+			file, err := os.Open("C:\\windows\\system32\\drivers\\etc\\hosts")
+			if err != nil {
+				log.Fatalf("failed opening file: %s", err)
+			}
+			defer file.Close()
 
-		entries, err := core.ParseHostsFile(file)
-		if err != nil {
-			log.Fatalf("failed parsing file: %s", err)
-		}
+			entries, err := core.ParseHostsFile(file)
+			if err != nil {
+				log.Fatalf("failed parsing file: %s", err)
+			}
 
-		if len(entries) == 0 {
-			log.Println("No entries found")
-			return
-		}
+			if len(entries) == 0 {
+				log.Println("No entries found")
+				return
+			}
 
-		renderList(entries)
-	},
+			renderList(entries)
+		},
+	}
 }
 
 func renderList(entries []core.HostEntry) {
@@ -68,18 +70,4 @@ func renderList(entries []core.HostEntry) {
 	}
 
 	fmt.Println(t)
-}
-
-func init() {
-	rootCmd.AddCommand(listCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

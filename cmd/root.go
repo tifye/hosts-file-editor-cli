@@ -13,7 +13,7 @@ var rootCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		listCmd.Run(cmd, args)
+		newListCommand().Execute()
 	},
 }
 
@@ -28,4 +28,5 @@ func init() {
 	cli = NewCli()
 
 	rootCmd.AddCommand(newAddCommand(cli))
+	rootCmd.AddCommand(newListCommand())
 }
