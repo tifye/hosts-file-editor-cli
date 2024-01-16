@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/tifye/hosts-file-editor-cli/core"
@@ -20,19 +20,24 @@ func newAddCommand(cli *Cli) *cobra.Command {
 		Short: "Add a new entry to the hosts file",
 		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("%s %s %s", hostname, ip, comment)
 			entry := &core.HostEntry{
 				Hostname: hostname,
 				IP:       ip,
 				Comment:  comment,
 			}
 
-			err := cli.Editor.AddEntry(*entry)
+			file, err := os.OpenFile("C:\\windows\\system32\\drivers\\etc\\hosts", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
+			if err != nil {
+				log.Fatalf("Failed to open hosts file %s", err)
+			}
+			defer file.Close()
+
+			cli.Editor.Writer = file
+
+			err = cli.Editor.AddEntry(*entry)
 			if err != nil {
 				log.Fatalf("Failed to add entry %s", err)
 			}
-
-			fmt.Println("Entry added")
 		},
 	}
 
