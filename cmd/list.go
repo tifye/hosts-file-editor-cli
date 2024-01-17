@@ -9,7 +9,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/table"
 	"github.com/spf13/cobra"
-	"github.com/tifye/hosts-file-editor-cli/core"
+	"github.com/tifye/hosts-file-editor-cli/pkg"
 )
 
 func newListCommand() *cobra.Command {
@@ -24,7 +24,7 @@ func newListCommand() *cobra.Command {
 			}
 			defer file.Close()
 
-			entries, err := core.ParseHostsFile(file)
+			entries, err := pkg.ParseHostsFile(file)
 			if err != nil {
 				log.Fatalf("failed parsing file: %s", err)
 			}
@@ -39,7 +39,7 @@ func newListCommand() *cobra.Command {
 	}
 }
 
-func renderList(entries []core.HostEntry) {
+func renderList(entries []pkg.HostEntry) {
 	re := lipgloss.NewRenderer(os.Stdout)
 
 	var (

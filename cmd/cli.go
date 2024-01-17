@@ -1,13 +1,15 @@
 package cmd
 
-import "github.com/tifye/hosts-file-editor-cli/core"
+import (
+	"github.com/tifye/hosts-file-editor-cli/pkg"
+)
 
 type Cli struct {
-	Editor *core.Editor
+	Editor *pkg.Editor
 }
 
 func NewCli() *Cli {
 	return &Cli{
-		Editor: &core.Editor{},
+		Editor: &pkg.Editor{},
 	}
 }

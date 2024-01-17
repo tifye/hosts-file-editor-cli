@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/tifye/hosts-file-editor-cli/core"
+	"github.com/tifye/hosts-file-editor-cli/pkg"
 )
 
 var (
@@ -20,7 +20,7 @@ func newAddCommand(cli *Cli) *cobra.Command {
 		Short: "Add a new entry to the hosts file",
 		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
-			entry := &core.HostEntry{
+			entry := &pkg.HostEntry{
 				Hostname: hostname,
 				IP:       ip,
 				Comment:  comment,
