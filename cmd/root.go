@@ -12,6 +12,7 @@ var rootCmd = &cobra.Command{
 	Use:   "hfe",
 	Short: "",
 	Long:  ``,
+	PersistentPreRun: ,
 	Run: func(cmd *cobra.Command, args []string) {
 		newListCommand().Execute()
 	},
@@ -29,4 +30,5 @@ func init() {
 
 	rootCmd.AddCommand(newAddCommand(cli))
 	rootCmd.AddCommand(newListCommand())
+	rootCmd.AddCommand(newRemoveCommand(cli))
 }
