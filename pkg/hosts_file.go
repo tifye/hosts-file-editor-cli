@@ -25,7 +25,8 @@ func (hf *HostsFile) SaveTo(target io.Writer) {
 		target.Write([]byte(line + "\r\n"))
 	}
 	for _, entry := range hf.Entries {
-		target.Write([]byte(entry.String() + "\r\n"))
+		line := fmt.Sprintf("%s\t%s\t#%s", entry.IP, entry.Hostname, entry.Comment)
+		target.Write([]byte(line + "\r\n"))
 	}
 }
 

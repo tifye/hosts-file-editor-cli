@@ -22,10 +22,11 @@ func ParseHostsFile(reader io.Reader) (*HostsFile, error) {
 			headerLines = append(headerLines, line)
 			continue
 		}
-
 		readHeader = true
 
+		var lineComment string
 		if cmtStart != -1 {
+			lineComment = line[cmtStart+1:]
 			line = line[:cmtStart]
 		}
 
@@ -42,6 +43,7 @@ func ParseHostsFile(reader io.Reader) (*HostsFile, error) {
 		entries = append(entries, HostEntry{
 			IP:       parts[0],
 			Hostname: parts[1],
+			Comment:  lineComment,
 		})
 	}
 
