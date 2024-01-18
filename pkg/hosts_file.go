@@ -53,8 +53,8 @@ func FilterOutDuplicates(entries []HostEntry, hostname, ip string) []HostEntry {
 	set := make(map[string]bool)
 	var filtered []HostEntry
 	for _, entry := range entries {
-		if (hostname == "" || entry.Hostname != hostname) &&
-			(ip == "" || entry.IP != ip) {
+		if (hostname != "" && entry.Hostname != hostname) ||
+			(ip != "" && entry.IP != ip) {
 			filtered = append(filtered, entry)
 			continue
 		}

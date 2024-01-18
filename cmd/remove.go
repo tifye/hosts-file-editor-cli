@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -24,9 +25,12 @@ func newRemoveCommand(cli *Cli) *cobra.Command {
 			var filtered []pkg.HostEntry
 
 			if opts.duplicates {
-				filtered = pkg.FilterOut(cli.HostsFile.Entries, opts.hostname, opts.ip)
-			} else {
 				filtered = pkg.FilterOutDuplicates(cli.HostsFile.Entries, opts.hostname, opts.ip)
+				for _, meep := range filtered {
+					fmt.Println(meep.String())
+				}
+			} else {
+				filtered = pkg.FilterOut(cli.HostsFile.Entries, opts.hostname, opts.ip)
 			}
 
 			cli.HostsFile.Entries = filtered
@@ -44,7 +48,5 @@ func newRemoveCommand(cli *Cli) *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.hostname, "hostname", "n", "", "remove entries with hostname")
 	cmd.Flags().StringVar(&opts.ip, "ip", "", "remove entries with ip")
-	cmd.MarkFlagsOneRequired("ip", "hostname")
-
 	return cmd
 }
