@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -12,29 +11,13 @@ import (
 	"github.com/tifye/hosts-file-editor-cli/pkg"
 )
 
-func newListCommand() *cobra.Command {
+func newListCommand(cli *Cli) *cobra.Command {
 	return &cobra.Command{
 		Use:   "list",
 		Short: "List all entries in the hosts file",
 		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
-			file, err := os.Open("C:\\windows\\system32\\drivers\\etc\\hosts")
-			if err != nil {
-				log.Fatalf("failed opening file: %s", err)
-			}
-			defer file.Close()
-
-			hostsFile, err := pkg.ParseHostsFile(file)
-			if err != nil {
-				log.Fatalf("failed parsing file: %s", err)
-			}
-
-			if len(hostsFile.Entries) == 0 {
-				log.Println("No entries found")
-				return
-			}
-
-			renderList(hostsFile.Entries)
+			renderList(cli.HostsFile.Entries)
 		},
 	}
 }

@@ -22,9 +22,13 @@ func (e HostEntry) String() string {
 
 func (hf *HostsFile) SaveTo(target io.Writer) {
 	for _, line := range hf.Header {
-		target.Write([]byte(line))
+		target.Write([]byte(line + "\r\n"))
 	}
 	for _, entry := range hf.Entries {
-		target.Write([]byte(entry.String()))
+		target.Write([]byte(entry.String() + "\r\n"))
 	}
+}
+
+func (hf *HostsFile) AddEntry(entry HostEntry) {
+	hf.Entries = append(hf.Entries, entry)
 }

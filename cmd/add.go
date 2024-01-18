@@ -26,18 +26,21 @@ func newAddCommand(cli *Cli) *cobra.Command {
 				Comment:  comment,
 			}
 
-			file, err := os.OpenFile("C:\\windows\\system32\\drivers\\etc\\hosts", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
-			if err != nil {
-				log.Fatalf("Failed to open hosts file %s", err)
-			}
-			defer file.Close()
+			cli.HostsFile.AddEntry(*entry)
 
-			cli.Editor.Writer = file
-
-			err = cli.Editor.AddEntry(*entry)
+			file, err := os.OpenFile("C:\\windows\\system32\\drivers\\etc\\hosts", os.O_TRUNC|os.O_WRONLY|os.O_CREATE, 0666)
 			if err != nil {
-				log.Fatalf("Failed to add entry %s", err)
+				log.Fatalf("Failed to open hosts file for writing %s", err)
 			}
+
+			file.Seek(0, 0)
+			cli.HostsFile.SaveTo(file)
+
+			if err = file.Close(); err != nil {
+				log.Printf("Failed to close hosts file %s", err)
+			}
+
+			newListCommand(cli).Run(cmd, args)
 		},
 	}
 
