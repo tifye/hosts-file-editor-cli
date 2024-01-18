@@ -13,19 +13,33 @@ type HostEntry struct {
 	Comment  string
 }
 
+type HostsFile struct {
+	Header  string
+	Entries []HostEntry
+}
+
 func (e HostEntry) String() string {
 	return fmt.Sprintf("%s %s %s", e.IP, e.Hostname, e.Comment)
 }
 
-func ParseHostsFile(reader io.Reader) ([]HostEntry, error) {
+func ParseHostsFile(reader io.Reader) (*HostsFile, error) {
 	var entries []HostEntry
 	scanner := bufio.NewScanner(reader)
 	var lineNum int
+	readHeader := false
+	var headerLines []string
 	for scanner.Scan() {
 		lineNum += 1
 
 		line := scanner.Text()
 		cmtStart := strings.Index(line, "#")
+		if readHeader == false && cmtStart == 0 {
+			headerLines = append(headerLines, line)
+			continue
+		}
+
+		readHeader = true
+
 		if cmtStart != -1 {
 			line = line[:cmtStart]
 		}
@@ -46,5 +60,8 @@ func ParseHostsFile(reader io.Reader) ([]HostEntry, error) {
 		})
 	}
 
-	return entries, nil
+	return &HostsFile{
+		Header:  strings.Join(headerLines, "\n"),
+		Entries: entries,
+	}, nil
 }

@@ -24,17 +24,17 @@ func newListCommand() *cobra.Command {
 			}
 			defer file.Close()
 
-			entries, err := pkg.ParseHostsFile(file)
+			hostsFile, err := pkg.ParseHostsFile(file)
 			if err != nil {
 				log.Fatalf("failed parsing file: %s", err)
 			}
 
-			if len(entries) == 0 {
+			if len(hostsFile.Entries) == 0 {
 				log.Println("No entries found")
 				return
 			}
 
-			renderList(entries)
+			renderList(hostsFile.Entries)
 		},
 	}
 }

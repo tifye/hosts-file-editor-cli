@@ -28,13 +28,13 @@ func (e *Editor) FilterOutEntries(hostname, ip string) ([]HostEntry, error) {
 		return entries, nil
 	}
 
-	entries, err := ParseHostsFile(e.Reader)
+	hostsFile, err := ParseHostsFile(e.Reader)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to parse hosts file got: %w", err)
 	}
 
 	filteredEntries := make([]HostEntry, 0)
-	for _, entry := range entries {
+	for _, entry := range hostsFile.Entries {
 		if (hostname == "" || entry.Hostname != hostname) &&
 			(ip == "" || entry.IP != ip) {
 			filteredEntries = append(filteredEntries, entry)
