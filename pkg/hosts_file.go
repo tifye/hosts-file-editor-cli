@@ -48,3 +48,23 @@ func FilterOut(entries []HostEntry, hostname, ip string) []HostEntry {
 	}
 	return filtered
 }
+
+func FilterOutDuplicates(entries []HostEntry, hostname, ip string) []HostEntry {
+	set := make(map[string]bool)
+	var filtered []HostEntry
+	for _, entry := range entries {
+		if (hostname == "" || entry.Hostname != hostname) &&
+			(ip == "" || entry.IP != ip) {
+			filtered = append(filtered, entry)
+			continue
+		}
+
+		if set[entry.String()] {
+			continue
+		}
+
+		filtered = append(filtered, entry)
+		set[entry.String()] = true
+	}
+	return filtered
+}

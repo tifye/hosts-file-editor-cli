@@ -8,8 +8,9 @@ import (
 )
 
 type removeOptions struct {
-	hostname string
-	ip       string
+	hostname   string
+	ip         string
+	duplicates bool
 }
 
 func newRemoveCommand(cli *Cli) *cobra.Command {
@@ -20,7 +21,14 @@ func newRemoveCommand(cli *Cli) *cobra.Command {
 		Short: "A brief description of your command",
 		Long:  `Remove an entry from the hosts file`,
 		Run: func(cmd *cobra.Command, args []string) {
-			filtered := pkg.FilterOut(cli.HostsFile.Entries, opts.hostname, opts.ip)
+			var filtered []pkg.HostEntry
+
+			if opts.duplicates {
+				filtered = pkg.FilterOut(cli.HostsFile.Entries, opts.hostname, opts.ip)
+			} else {
+				filtered = pkg.FilterOutDuplicates(cli.HostsFile.Entries, opts.hostname, opts.ip)
+			}
+
 			cli.HostsFile.Entries = filtered
 
 			err := pkg.SaveToFile(cli.HostsFile, "C:\\windows\\system32\\drivers\\etc\\hosts")
@@ -32,8 +40,10 @@ func newRemoveCommand(cli *Cli) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.hostname, "hostname", "n", "", "Hostname")
-	cmd.Flags().StringVar(&opts.ip, "ip", "", "IP")
+	cmd.Flags().BoolVarP(&opts.duplicates, "duplicates", "d", false, "remove duplicates only")
+
+	cmd.Flags().StringVarP(&opts.hostname, "hostname", "n", "", "remove entries with hostname")
+	cmd.Flags().StringVar(&opts.ip, "ip", "", "remove entries with ip")
 	cmd.MarkFlagsOneRequired("ip", "hostname")
 
 	return cmd

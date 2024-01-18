@@ -23,7 +23,6 @@ func newRootCommand(cli *Cli) *cobra.Command {
 		Short: "",
 		Long:  ``,
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			log.Println("Running prerun")
 			file, err := os.Open("C:\\windows\\system32\\drivers\\etc\\hosts")
 			if err != nil {
 				log.Fatalf("failed opening file: %s", err)
