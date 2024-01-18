@@ -7,21 +7,6 @@ import (
 	"strings"
 )
 
-type HostEntry struct {
-	IP       string
-	Hostname string
-	Comment  string
-}
-
-type HostsFile struct {
-	Header  string
-	Entries []HostEntry
-}
-
-func (e HostEntry) String() string {
-	return fmt.Sprintf("%s %s %s", e.IP, e.Hostname, e.Comment)
-}
-
 func ParseHostsFile(reader io.Reader) (*HostsFile, error) {
 	var entries []HostEntry
 	scanner := bufio.NewScanner(reader)
@@ -61,7 +46,7 @@ func ParseHostsFile(reader io.Reader) (*HostsFile, error) {
 	}
 
 	return &HostsFile{
-		Header:  strings.Join(headerLines, "\n"),
+		Header:  headerLines,
 		Entries: entries,
 	}, nil
 }
