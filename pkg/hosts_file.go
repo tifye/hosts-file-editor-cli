@@ -33,3 +33,18 @@ func (hf *HostsFile) SaveTo(target io.Writer) {
 func (hf *HostsFile) AddEntry(entry HostEntry) {
 	hf.Entries = append(hf.Entries, entry)
 }
+
+func FilterOut(entries []HostEntry, hostname, ip string) []HostEntry {
+	if hostname == "" && ip == "" {
+		return nil
+	}
+
+	var filtered []HostEntry
+	for _, entry := range entries {
+		if (hostname == "" || entry.Hostname != hostname) &&
+			(ip == "" || entry.IP != ip) {
+			filtered = append(filtered, entry)
+		}
+	}
+	return filtered
+}

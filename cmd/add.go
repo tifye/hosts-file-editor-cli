@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"log"
-	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/tifye/hosts-file-editor-cli/pkg"
@@ -28,16 +27,9 @@ func newAddCommand(cli *Cli) *cobra.Command {
 
 			cli.HostsFile.AddEntry(*entry)
 
-			file, err := os.OpenFile("C:\\windows\\system32\\drivers\\etc\\hosts", os.O_TRUNC|os.O_WRONLY|os.O_CREATE, 0666)
+			err := pkg.SaveToFile(cli.HostsFile, "C:\\windows\\system32\\drivers\\etc\\hosts")
 			if err != nil {
-				log.Fatalf("Failed to open hosts file for writing %s", err)
-			}
-
-			file.Seek(0, 0)
-			cli.HostsFile.SaveTo(file)
-
-			if err = file.Close(); err != nil {
-				log.Printf("Failed to close hosts file %s", err)
+				log.Fatal(err)
 			}
 
 			newListCommand(cli).Run(cmd, args)

@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
+	"github.com/tifye/hosts-file-editor-cli/pkg"
 )
 
 type removeOptions struct {
@@ -19,7 +20,15 @@ func newRemoveCommand(cli *Cli) *cobra.Command {
 		Short: "A brief description of your command",
 		Long:  `Remove an entry from the hosts file`,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("Not implemented")
+			filtered := pkg.FilterOut(cli.HostsFile.Entries, opts.hostname, opts.ip)
+			cli.HostsFile.Entries = filtered
+
+			err := pkg.SaveToFile(cli.HostsFile, "C:\\windows\\system32\\drivers\\etc\\hosts")
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			newListCommand(cli).Run(cmd, args)
 		},
 	}
 
