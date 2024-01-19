@@ -7,22 +7,24 @@ import (
 	"github.com/tifye/hosts-file-editor-cli/pkg"
 )
 
-var (
+type addOptions struct {
 	hostname string
 	ip       string
 	comment  string
-)
+}
 
 func newAddCommand(cli *Cli) *cobra.Command {
+	opts := &addOptions{}
+
 	cmd := &cobra.Command{
 		Use:   "add",
 		Short: "Add a new entry to the hosts file",
 		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
 			entry := &pkg.HostEntry{
-				Hostname: hostname,
-				IP:       ip,
-				Comment:  comment,
+				Hostname: opts.hostname,
+				IP:       opts.ip,
+				Comment:  opts.comment,
 			}
 
 			cli.HostsFile.AddEntry(*entry)
@@ -36,13 +38,13 @@ func newAddCommand(cli *Cli) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&hostname, "hostname", "n", "", "Hostname")
+	cmd.Flags().StringVarP(&opts.hostname, "hostname", "n", "", "Hostname")
 	cmd.MarkFlagRequired("hostname")
 
-	cmd.Flags().StringVar(&ip, "ip", "", "IP")
+	cmd.Flags().StringVar(&opts.ip, "ip", "", "IP")
 	cmd.MarkFlagRequired("ip")
 
-	cmd.Flags().StringVarP(&comment, "comment", "c", "", "Comment")
+	cmd.Flags().StringVarP(&opts.comment, "comment", "c", "", "Comment")
 
 	return cmd
 }
