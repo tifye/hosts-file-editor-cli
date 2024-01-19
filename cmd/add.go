@@ -38,7 +38,7 @@ func newAddCommand(cli *Cli) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.hostname, "hostname", "n", "", "Hostname")
+	cmd.Flags().StringVarP(&opts.hostname, "hostname", "h", "", "Hostname")
 	cmd.MarkFlagRequired("hostname")
 
 	cmd.Flags().StringVar(&opts.ip, "ip", "", "IP")

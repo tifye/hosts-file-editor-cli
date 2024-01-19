@@ -46,7 +46,7 @@ func newRemoveCommand(cli *Cli) *cobra.Command {
 
 	cmd.Flags().BoolVarP(&opts.duplicates, "duplicates", "d", false, "remove duplicates only")
 
-	cmd.Flags().StringVarP(&opts.hostname, "hostname", "n", "", "remove entries with hostname")
+	cmd.Flags().StringVarP(&opts.hostname, "hostname", "h", "", "remove entries with hostname")
 	cmd.Flags().StringVar(&opts.ip, "ip", "", "remove entries with ip")
 	return cmd
 }
