@@ -21,6 +21,9 @@ func newRemoveCommand(cli *Cli) *cobra.Command {
 		Use:   "remove",
 		Short: "A brief description of your command",
 		Long:  `Remove an entry from the hosts file`,
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return pkg.CreateBackupFile(cli.HostsFile, "remove")
+		},
 		Run: func(cmd *cobra.Command, args []string) {
 			var filtered []pkg.HostEntry
 

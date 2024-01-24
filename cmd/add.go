@@ -20,13 +20,15 @@ func newAddCommand(cli *Cli) *cobra.Command {
 		Use:   "add",
 		Short: "Add a new entry to the hosts file",
 		Long:  ``,
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return pkg.CreateBackupFile(cli.HostsFile, "add")
+		},
 		Run: func(cmd *cobra.Command, args []string) {
 			entry := &pkg.HostEntry{
 				Hostname: opts.hostname,
 				IP:       opts.ip,
 				Comment:  opts.comment,
 			}
-
 			cli.HostsFile.AddEntry(*entry)
 
 			err := pkg.SaveToFile(cli.HostsFile, "C:\\windows\\system32\\drivers\\etc\\hosts")

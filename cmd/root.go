@@ -18,7 +18,7 @@ var (
 )
 
 func newRootCommand(cli *Cli) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "hfe",
 		Short: "",
 		Long:  ``,
@@ -44,6 +44,10 @@ func newRootCommand(cli *Cli) *cobra.Command {
 			newListCommand(cli).Execute()
 		},
 	}
+
+	cmd.PersistentFlags().BoolP("help", "", false, "help for this command")
+
+	return cmd
 }
 
 func Execute() {
