@@ -30,7 +30,7 @@ func newRootCommand(cli *Cli) *cobra.Command {
 			}
 
 			hf, err := pkg.ParseHostsFile(file)
-			if err != nil {
+			if err != nil || hf == nil {
 				log.Fatalf("failed parsing file: %s", err)
 			}
 
@@ -72,5 +72,6 @@ func addCommands(cmd *cobra.Command, cli *Cli) {
 		newListCommand(cli),
 		newRemoveCommand(cli),
 		newOpenCommand(),
+		newHeaderCommand(cli),
 	)
 }
