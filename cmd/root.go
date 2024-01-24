@@ -9,7 +9,8 @@ import (
 )
 
 type Cli struct {
-	HostsFile *pkg.HostsFile
+	HostsFile      *pkg.HostsFile
+	AccessibleMode bool
 }
 
 var (
@@ -58,7 +59,9 @@ func Execute() {
 }
 
 func init() {
-	cli = &Cli{}
+	cli = &Cli{
+		AccessibleMode: os.Getenv("ACCESSIBLE") != "", // Todo: add to config cmd later
+	}
 	rootCmd = newRootCommand(cli)
 	addCommands(rootCmd, cli)
 }

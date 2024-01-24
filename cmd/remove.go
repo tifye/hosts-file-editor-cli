@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/charmbracelet/huh"
 	"github.com/spf13/cobra"
 	"github.com/tifye/hosts-file-editor-cli/pkg"
 )
@@ -25,8 +26,9 @@ func newRemoveCommand(cli *Cli) *cobra.Command {
 			return pkg.CreateBackupFile(cli.HostsFile, "remove")
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			var filtered []pkg.HostEntry
+			defer newListCommand(cli).Run(cmd, args)
 
+			var filtered []pkg.HostEntry
 			if opts.duplicates {
 				filtered = pkg.FilterOutDuplicates(cli.HostsFile.Entries, opts.hostname, opts.ip)
 				for _, meep := range filtered {
@@ -36,14 +38,32 @@ func newRemoveCommand(cli *Cli) *cobra.Command {
 				filtered = pkg.FilterOut(cli.HostsFile.Entries, opts.hostname, opts.ip)
 			}
 
-			cli.HostsFile.Entries = filtered
+			numMatchedEntries := len(cli.HostsFile.Entries) - len(filtered)
+			if numMatchedEntries <= 0 {
+				log.Println("No matching entries found")
+				return
+			}
 
-			err := pkg.SaveToFile(cli.HostsFile, "C:\\windows\\system32\\drivers\\etc\\hosts")
+			var didConfirm bool
+			err := huh.NewConfirm().
+				Title(fmt.Sprintf("Matched %d entries, are you sure you want to remove?", numMatchedEntries)).
+				Value(&didConfirm).
+				WithAccessible(cli.AccessibleMode).
+				Run()
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			newListCommand(cli).Run(cmd, args)
+			if !didConfirm {
+				return
+			}
+
+			cli.HostsFile.Entries = filtered
+
+			err = pkg.SaveToFile(cli.HostsFile, "C:\\windows\\system32\\drivers\\etc\\hosts")
+			if err != nil {
+				log.Fatal(err)
+			}
 		},
 	}
 
