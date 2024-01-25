@@ -5,20 +5,17 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/tifye/hosts-file-editor-cli/cmd/backups"
+	"github.com/tifye/hosts-file-editor-cli/cmd/cli"
 	"github.com/tifye/hosts-file-editor-cli/pkg"
 )
 
-type Cli struct {
-	HostsFile      *pkg.HostsFile
-	AccessibleMode bool
-}
-
 var (
-	cli     *Cli
-	rootCmd *cobra.Command
+	hostsCli cli.Cli
+	rootCmd  *cobra.Command
 )
 
-func newRootCommand(cli *Cli) *cobra.Command {
+func newRootCommand(hostsCli cli.Cli) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "hfe",
 		Short: "",
@@ -34,7 +31,7 @@ func newRootCommand(cli *Cli) *cobra.Command {
 				log.Fatalf("failed parsing file: %s", err)
 			}
 
-			cli.HostsFile = hf
+			hostsCli.SetHostsFile(hf)
 
 			err = file.Close()
 			if err != nil {
@@ -42,7 +39,7 @@ func newRootCommand(cli *Cli) *cobra.Command {
 			}
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			newListCommand(cli).Execute()
+			NewListCommand(hostsCli).Execute()
 		},
 	}
 
@@ -59,19 +56,20 @@ func Execute() {
 }
 
 func init() {
-	cli = &Cli{
-		AccessibleMode: os.Getenv("ACCESSIBLE") != "", // Todo: add to config cmd later
+	hostsCli = &cli.HostsCli{
+		Accessible: os.Getenv("ACCESSIBLE") != "", // Todo: add to config cmd later
 	}
-	rootCmd = newRootCommand(cli)
-	addCommands(rootCmd, cli)
+	rootCmd = newRootCommand(hostsCli)
+	addCommands(rootCmd, hostsCli)
 }
 
-func addCommands(cmd *cobra.Command, cli *Cli) {
+func addCommands(cmd *cobra.Command, hostsCli cli.Cli) {
 	cmd.AddCommand(
-		newAddCommand(cli),
-		newListCommand(cli),
-		newRemoveCommand(cli),
-		newOpenCommand(),
-		newHeaderCommand(cli),
+		NewAddCommand(hostsCli),
+		NewListCommand(hostsCli),
+		NewRemoveCommand(hostsCli),
+		NewOpenCommand(),
+		NewHeaderCommand(hostsCli),
+		backups.NewBackupsCommand(hostsCli),
 	)
 }

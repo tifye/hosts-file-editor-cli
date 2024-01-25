@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmbracelet/huh"
 	"github.com/spf13/cobra"
+	"github.com/tifye/hosts-file-editor-cli/cmd/cli"
 	"github.com/tifye/hosts-file-editor-cli/pkg"
 )
 
@@ -15,7 +16,7 @@ type removeOptions struct {
 	duplicates bool
 }
 
-func newRemoveCommand(cli *Cli) *cobra.Command {
+func NewRemoveCommand(hostsCli cli.Cli) *cobra.Command {
 	opts := &removeOptions{}
 
 	cmd := &cobra.Command{
@@ -23,22 +24,22 @@ func newRemoveCommand(cli *Cli) *cobra.Command {
 		Short: "Remove entries either by hostname, ip, or both",
 		Long:  ``,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			return pkg.CreateBackupFile(cli.HostsFile, "remove")
+			return pkg.CreateBackupFile(hostsCli.HostsFile(), "remove")
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			defer newListCommand(cli).Run(cmd, args)
+			defer NewListCommand(hostsCli).Run(cmd, args)
 
 			var filtered []pkg.HostEntry
 			if opts.duplicates {
-				filtered = pkg.FilterOutDuplicates(cli.HostsFile.Entries, opts.hostname, opts.ip)
+				filtered = pkg.FilterOutDuplicates(hostsCli.HostsFile().Entries, opts.hostname, opts.ip)
 				for _, meep := range filtered {
 					fmt.Println(meep.String())
 				}
 			} else {
-				filtered = pkg.FilterOut(cli.HostsFile.Entries, opts.hostname, opts.ip)
+				filtered = pkg.FilterOut(hostsCli.HostsFile().Entries, opts.hostname, opts.ip)
 			}
 
-			numMatchedEntries := len(cli.HostsFile.Entries) - len(filtered)
+			numMatchedEntries := len(hostsCli.HostsFile().Entries) - len(filtered)
 			if numMatchedEntries <= 0 {
 				log.Println("No matching entries found")
 				return
@@ -48,7 +49,7 @@ func newRemoveCommand(cli *Cli) *cobra.Command {
 			err := huh.NewConfirm().
 				Title(fmt.Sprintf("Matched %d entries, are you sure you want to remove?", numMatchedEntries)).
 				Value(&didConfirm).
-				WithAccessible(cli.AccessibleMode).
+				WithAccessible(hostsCli.AccessibleMode()).
 				Run()
 			if err != nil {
 				log.Fatal(err)
@@ -58,9 +59,9 @@ func newRemoveCommand(cli *Cli) *cobra.Command {
 				return
 			}
 
-			cli.HostsFile.Entries = filtered
+			hostsCli.HostsFile().Entries = filtered
 
-			err = pkg.SaveToFile(cli.HostsFile, "C:\\windows\\system32\\drivers\\etc\\hosts")
+			err = pkg.SaveToFile(hostsCli.HostsFile(), "C:\\windows\\system32\\drivers\\etc\\hosts")
 			if err != nil {
 				log.Fatal(err)
 			}

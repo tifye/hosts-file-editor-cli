@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/spf13/cobra"
+	"github.com/tifye/hosts-file-editor-cli/cmd/cli"
 	"github.com/tifye/hosts-file-editor-cli/pkg"
 )
 
@@ -13,7 +14,7 @@ type addOptions struct {
 	comment  string
 }
 
-func newAddCommand(cli *Cli) *cobra.Command {
+func NewAddCommand(hostsCli cli.Cli) *cobra.Command {
 	opts := &addOptions{}
 
 	cmd := &cobra.Command{
@@ -21,7 +22,7 @@ func newAddCommand(cli *Cli) *cobra.Command {
 		Short: "Add a new entry to the hosts file",
 		Long:  ``,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			return pkg.CreateBackupFile(cli.HostsFile, "add")
+			return pkg.CreateBackupFile(hostsCli.HostsFile(), "add")
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			entry := &pkg.HostEntry{
@@ -29,14 +30,14 @@ func newAddCommand(cli *Cli) *cobra.Command {
 				IP:       opts.ip,
 				Comment:  opts.comment,
 			}
-			cli.HostsFile.AddEntry(*entry)
+			hostsCli.HostsFile().AddEntry(*entry)
 
-			err := pkg.SaveToFile(cli.HostsFile, "C:\\windows\\system32\\drivers\\etc\\hosts")
+			err := pkg.SaveToFile(hostsCli.HostsFile(), "C:\\windows\\system32\\drivers\\etc\\hosts")
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			newListCommand(cli).Run(cmd, args)
+			NewListCommand(hostsCli).Run(cmd, args)
 		},
 	}
 

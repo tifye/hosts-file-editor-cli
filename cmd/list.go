@@ -8,16 +8,18 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/table"
 	"github.com/spf13/cobra"
+	"github.com/tifye/hosts-file-editor-cli/cmd/cli"
 	"github.com/tifye/hosts-file-editor-cli/pkg"
 )
 
-func newListCommand(cli *Cli) *cobra.Command {
+func NewListCommand(hostsCli cli.Cli) *cobra.Command {
 	return &cobra.Command{
 		Use:   "list",
 		Short: "List all entries in the hosts file",
 		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
-			renderList(cli.HostsFile.Entries)
+			renderHeader(hostsCli.HostsFile().Header)
+			renderList(hostsCli.HostsFile().Entries)
 		},
 	}
 }

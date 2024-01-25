@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newOpenCommand() *cobra.Command {
+func NewOpenCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "open",
 		Short: "Opens hosts file in default text editor for viewing only",
