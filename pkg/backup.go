@@ -1,20 +1,90 @@
 package pkg
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"time"
 )
 
-func CreateBackupFile(hf *HostsFile, cmd string) error {
-	cacheDir, err := os.UserCacheDir()
-	if err != nil {
-		return fmt.Errorf("Failed to determine cache directory %w", err)
+type Backup struct {
+	Time     time.Time
+	Filepath string
+	Comment  string
+}
+
+var pathToBackups *string
+
+func GetBackupsDirPath() (string, error) {
+	if pathToBackups != nil {
+		return *pathToBackups, nil
 	}
 
-	backupDir := fmt.Sprintf("%s\\hosts-file-editor-cli", cacheDir)
+	cacheDir, err := os.UserCacheDir()
+	if err != nil {
+		return "", fmt.Errorf("Failed to determine cache directory %w", err)
+	}
+
+	return fmt.Sprintf("%s\\hosts-file-editor-cli", cacheDir), nil
+}
+
+func GetListOfBackups() ([]Backup, error) {
+	backupsPath, err := GetBackupsDirPath()
+	if err != nil {
+		return nil, err
+	}
+
+	dirEntries, err := os.ReadDir(backupsPath)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to read backups directory: %w", err)
+	}
+
+	var backups []Backup
+	for _, dirEntry := range dirEntries {
+		backup, err := parseBackupName(dirEntry.Name())
+		if err != nil {
+			return nil, fmt.Errorf("Failed to parse backup file %s got: %s", dirEntry.Name(), err)
+		}
+		if backup == nil {
+			continue
+		}
+		backups = append(backups, *backup)
+	}
+
+	return backups, nil
+}
+
+func parseBackupName(name string) (*Backup, error) {
+	parts := strings.Split(name, "-")
+	if len(parts) < 0 || len(parts) < 2 || parts[0] != "backup" {
+		return nil, nil
+	}
+
+	unixTimeStr := parts[1]
+	unixTime, err := strconv.Atoi(unixTimeStr)
+	if err != nil {
+		return nil, errors.New("Could not parse backup time string")
+	}
+	time := time.Unix(int64(unixTime), 0)
+
+	comment := strings.Join(parts[2:], " ")
+	return &Backup{
+		Time:     time,
+		Filepath: name,
+		Comment:  comment,
+	}, nil
+}
+
+func CreateBackupFile(hf *HostsFile, cmd string) error {
+	backupDir, err := GetBackupsDirPath()
+	if err != nil {
+		return err
+	}
+
 	err = os.MkdirAll(backupDir, 0777)
 	if err != nil {
 		return fmt.Errorf("Failed to create backup directory %w", err)
