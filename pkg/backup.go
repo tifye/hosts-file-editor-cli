@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -55,6 +56,9 @@ func GetListOfBackups() ([]Backup, error) {
 		backups = append(backups, *backup)
 	}
 
+	sort.Slice(backups, func(ia, ib int) bool {
+		return backups[ia].Time.Before(backups[ib].Time)
+	})
 	return backups, nil
 }
 
