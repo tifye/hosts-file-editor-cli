@@ -50,10 +50,8 @@ func renderList(entries []pkg.HostEntry) {
 			}
 		})
 
-	nr := 0
-	for _, entry := range entries {
-		t.Row(fmt.Sprint(nr), entry.Hostname, entry.IP, strings.TrimSpace(entry.Comment))
-		nr += 1
+	for i, entry := range entries {
+		t.Row(fmt.Sprint(i), entry.Hostname, entry.IP, strings.TrimSpace(entry.Comment))
 	}
 
 	fmt.Println(t)
