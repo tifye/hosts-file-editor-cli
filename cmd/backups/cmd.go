@@ -19,6 +19,7 @@ func NewBackupsCommand(hostsCli cli.Cli) *cobra.Command {
 		newListCommand(hostsCli),
 		newOpenCommand(hostsCli),
 		newRestoreCommand(hostsCli),
+		newClearCommand(hostsCli),
 	)
 
 	return cmd
