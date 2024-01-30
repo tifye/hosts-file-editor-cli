@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/tifye/hosts-file-editor-cli/cmd/cli"
 )
@@ -12,7 +14,7 @@ func NewListCommand(hostsCli cli.Cli) *cobra.Command {
 		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
 			cli.RenderHeader(hostsCli.HostsFile().Header)
-			cli.RenderEntries(hostsCli.HostsFile().Entries)
+			fmt.Println(cli.RenderEntries(hostsCli.HostsFile().Entries))
 		},
 	}
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/tifye/hosts-file-editor-cli/pkg"
 )
 
-func RenderEntries(entries []pkg.HostEntry) {
+func RenderEntries(entries []pkg.HostEntry) string {
 	re := lipgloss.NewRenderer(os.Stdout)
 
 	var (
@@ -40,7 +40,7 @@ func RenderEntries(entries []pkg.HostEntry) {
 		t.Row(fmt.Sprint(i), entry.Hostname, entry.IP, strings.TrimSpace(entry.Comment))
 	}
 
-	fmt.Println(t)
+	return t.Render()
 }
 
 func RenderHeader(header []string) {

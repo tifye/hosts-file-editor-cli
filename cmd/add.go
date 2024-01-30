@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 
+	"github.com/charmbracelet/huh"
 	"github.com/spf13/cobra"
 	"github.com/tifye/hosts-file-editor-cli/cmd/cli"
 	"github.com/tifye/hosts-file-editor-cli/pkg"
@@ -30,6 +32,27 @@ func NewAddCommand(hostsCli cli.Cli) *cobra.Command {
 				IP:       opts.ip,
 				Comment:  opts.comment,
 			}
+
+			dups := pkg.Where(hostsCli.HostsFile().Entries, func(cur *pkg.HostEntry) bool {
+				return cur.Hostname == entry.Hostname
+			})
+			if len(dups) > 0 {
+				dupsTable := cli.RenderEntries(dups)
+				var didConfirm bool
+				err := huh.NewConfirm().
+					Title(fmt.Sprint("Do you want to continue?")).
+					Description(fmt.Sprintf("You are adding an entry whose hostname is already listed. This would create a conflict and may cause unpredictable behaviour.\nConflicting entries:\n%s", dupsTable)).
+					Value(&didConfirm).
+					WithAccessible(hostsCli.AccessibleMode()).
+					Run()
+				if err != nil {
+					log.Fatal(err)
+				}
+				if !didConfirm {
+					return
+				}
+			}
+
 			hostsCli.HostsFile().AddEntry(*entry)
 
 			err := pkg.SaveToFile(hostsCli.HostsFile(), "C:\\windows\\system32\\drivers\\etc\\hosts")

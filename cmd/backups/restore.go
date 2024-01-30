@@ -59,7 +59,7 @@ func newRestoreCommand(hostsCli cli.Cli) *cobra.Command {
 			}
 
 			cli.RenderHeader(backupHf.Header)
-			cli.RenderEntries(backupHf.Entries)
+			fmt.Println(cli.RenderEntries(backupHf.Entries))
 		},
 	}
 

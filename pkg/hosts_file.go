@@ -34,6 +34,16 @@ func (hf *HostsFile) AddEntry(entry HostEntry) {
 	hf.Entries = append(hf.Entries, entry)
 }
 
+func Where(entries []HostEntry, predicate func(entry *HostEntry) bool) []HostEntry {
+	var filtered []HostEntry
+	for _, entry := range entries {
+		if predicate(&entry) {
+			filtered = append(filtered, entry)
+		}
+	}
+	return filtered
+}
+
 func FilterOut(entries []HostEntry, hostname, ip string) []HostEntry {
 	if hostname == "" && ip == "" {
 		return nil
