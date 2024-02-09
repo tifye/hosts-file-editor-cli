@@ -12,7 +12,7 @@ import (
 func newOpenCommand(hostsCli cli.Cli) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:              "open",
-		Short:            "Open backups folder",
+		Short:            "Open folder containing backup files",
 		Long:             ``,
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {},
 		Run: func(cmd *cobra.Command, args []string) {

@@ -8,7 +8,7 @@ import (
 func NewHeaderCommand(hostsCli cli.Cli) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "header",
-		Short: "Print the header comments (comments at top of hosts file)",
+		Short: "Print the header comments",
 		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
 			cli.RenderHeader(hostsCli.HostsFile().Header)

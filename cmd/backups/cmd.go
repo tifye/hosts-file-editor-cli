@@ -8,7 +8,7 @@ import (
 func NewBackupsCommand(hostsCli cli.Cli) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "backups",
-		Short: "A brief description of your command",
+		Short: "Subcommands for managing backups",
 		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
 			cmd.Help()
